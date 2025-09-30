@@ -29,25 +29,25 @@ class GameModeSelectionActivity : AppCompatActivity() {
     }
 
     private fun setupGameModeCards() {
-        val cardClassic = findViewById<CardView>(R.id.cardClassic)
-        val cardSurvival = findViewById<CardView>(R.id.cardSurvival)
-        val cardBoss = findViewById<CardView>(R.id.cardBoss)
-        val cardEndless = findViewById<CardView>(R.id.cardEndless)
+        val cardEasy = findViewById<CardView>(R.id.cardEasy)
+        val cardMedium = findViewById<CardView>(R.id.cardMedium)
+        val cardHard = findViewById<CardView>(R.id.cardHard)
+        val cardExtreme = findViewById<CardView>(R.id.cardExtreme)
 
-        cardClassic.setOnClickListener {
-            startGame("CLASSIC")
+        cardEasy.setOnClickListener {
+            startGame("EASY")
         }
 
-        cardSurvival.setOnClickListener {
-            startGame("SURVIVAL")
+        cardMedium.setOnClickListener {
+            startGame("MEDIUM")
         }
 
-        cardBoss.setOnClickListener {
-            startGame("BOSS")
+        cardHard.setOnClickListener {
+            startGame("HARD")
         }
 
-        cardEndless.setOnClickListener {
-            startGame("ENDLESS")
+        cardExtreme.setOnClickListener {
+            startGame("EXTREME")
         }
     }
 

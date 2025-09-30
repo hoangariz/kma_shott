@@ -17,10 +17,10 @@
     <color name="button_exit">#FF5757</color>
     
     <!-- Game Mode Colors -->
-    <color name="mode_classic">#4CAF50</color>
-    <color name="mode_survival">#FF9800</color>
-    <color name="mode_boss">#F44336</color>
-    <color name="mode_endless">#9C27B0</color>
+    <color name="mode_easy">#4CAF50</color>
+    <color name="mode_medium">#FF9800</color>
+    <color name="mode_hard">#F44336</color>
+    <color name="mode_extreme">#9C27B0</color>
     
     <!-- UI Colors -->
     <color name="text_white">#FFFFFF</color>

@@ -2,9 +2,14 @@ package com.example.kma_shot
 
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import com.example.kma_shot.engine.GameView
 
 class GameActivity : AppCompatActivity() {
+
+    private lateinit var gameView: GameView
+    private var gameMode = "EASY"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,13 +24,31 @@ class GameActivity : AppCompatActivity() {
             or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
         )
         
-        setContentView(R.layout.activity_game)
+        // Keep screen on during gameplay
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         
-        // Game logic will be implemented here later
+        // Get game mode from intent
+        gameMode = intent.getStringExtra("GAME_MODE") ?: "EASY"
+        
+        // Create and set game view
+        gameView = GameView(this, gameMode)
+        setContentView(gameView)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        gameView.resume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        gameView.pause()
     }
 
     override fun onBackPressed() {
+        // Pause game and show confirmation dialog
+        gameView.pause()
+        // TODO: Show pause menu or exit confirmation
         super.onBackPressed()
-        // Can add pause menu or confirmation dialog here later
     }
 }
