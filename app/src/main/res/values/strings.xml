@@ -1,3 +1,22 @@
 <resources>
-    <string name="app_name">kma_shot</string>
+    <string name="app_name">KMA Shot</string>
+    
+    <!-- Main Menu -->
+    <string name="menu_start">BẮT ĐẦU</string>
+    <string name="menu_highscore">ĐIỂM CAO</string>
+    <string name="menu_tutorial">HƯỚNG DẪN</string>
+    <string name="menu_settings">CÀI ĐẶT</string>
+    <string name="menu_exit">THOÁT</string>
+    
+    <!-- High Score -->
+    <string name="highscore_title">BẢNG ĐIỂM CAO</string>
+    <string name="back">QUAY LẠI</string>
+    
+    <!-- Tutorial -->
+    <string name="tutorial_title">HƯỚNG DẪN CHƠI</string>
+    
+    <!-- Settings -->
+    <string name="settings_title">CÀI ĐẶT</string>
+    <string name="music_volume">Âm lượng nhạc</string>
+    <string name="sound_effects">Hiệu ứng âm thanh</string>
 </resources>

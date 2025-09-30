@@ -2,4 +2,22 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    
+    <!-- Theme Colors -->
+    <color name="primary_purple">#AC41F2</color>
+    <color name="dark_purple">#7B2CBF</color>
+    <color name="light_purple">#C77DFF</color>
+    <color name="purple_accent">#E0AAFF</color>
+    
+    <!-- Button Colors -->
+    <color name="button_start">#00D9FF</color>
+    <color name="button_highscore">#FFD60A</color>
+    <color name="button_tutorial">#06FFA5</color>
+    <color name="button_settings">#FF6B9D</color>
+    <color name="button_exit">#FF5757</color>
+    
+    <!-- UI Colors -->
+    <color name="text_white">#FFFFFF</color>
+    <color name="text_shadow">#000000</color>
+    <color name="transparent">#00000000</color>
 </resources>
