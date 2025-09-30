@@ -44,7 +44,7 @@ class MainMenuActivity : AppCompatActivity() {
         // Add click animations and listeners
         btnStart.setOnClickListener {
             animateButton(it)
-            startActivity(Intent(this, GameActivity::class.java))
+            startActivity(Intent(this, GameModeSelectionActivity::class.java))
         }
 
         btnHighScore.setOnClickListener {

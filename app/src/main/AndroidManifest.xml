@@ -23,6 +23,12 @@
             </intent-filter>
         </activity>
         
+        <!-- Game Mode Selection Activity -->
+        <activity
+            android:name=".GameModeSelectionActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        
         <!-- Game Activity -->
         <activity
             android:name=".GameActivity"

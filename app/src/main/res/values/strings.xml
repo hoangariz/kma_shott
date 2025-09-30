@@ -19,4 +19,15 @@
     <string name="settings_title">CÀI ĐẶT</string>
     <string name="music_volume">Âm lượng nhạc</string>
     <string name="sound_effects">Hiệu ứng âm thanh</string>
+    
+    <!-- Game Modes -->
+    <string name="game_mode_title">CHỌN CHẾ ĐỘ CHƠI</string>
+    <string name="mode_classic">CHẾ ĐỘ CLASSIC</string>
+    <string name="mode_classic_desc">Chế độ cổ điển với gạch cơ bản</string>
+    <string name="mode_survival">CHẾ ĐỘ SURVIVAL</string>
+    <string name="mode_survival_desc">Sinh tồn với gạch liên tục rơi xuống</string>
+    <string name="mode_boss">CHẾ ĐỘ BOSS</string>
+    <string name="mode_boss_desc">Đối đầu với các boss mạnh mẽ</string>
+    <string name="mode_endless">CHẾ ĐỘ ENDLESS</string>
+    <string name="mode_endless_desc">Chơi không giới hạn, đạt điểm cao nhất</string>
 </resources>
