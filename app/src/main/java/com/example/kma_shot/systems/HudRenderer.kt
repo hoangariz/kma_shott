@@ -1,5 +1,7 @@
 package com.example.kma_shot.systems
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -7,6 +9,13 @@ import android.graphics.RectF
 import com.example.kma_shot.core.GameState
 
 class HudRenderer {
+
+    // Pause button properties
+    private var pauseButtonBitmap: Bitmap? = null
+    private var pauseButtonX = 0f
+    private var pauseButtonY = 0f
+    private var pauseButtonSize = 60f
+    private var pauseButtonRect = RectF()
 
     // ====== Paints ======
     private val textPaint = Paint().apply {
@@ -86,6 +95,9 @@ class HudRenderer {
 
         // 2) Bên dưới top panel: SCORE (trái) và BULLETS (phải)
         drawBelowTopInfo(canvas, gameState, screenWidth, topPanelBottomY)
+        
+        // 3) Pause button ở góc dưới phải
+        drawPauseButton(canvas, screenWidth, screenHeight)
     }
 
     // ====== TOP PANEL ======
@@ -268,5 +280,62 @@ class HudRenderer {
         }
 
         canvas.drawText("PAUSED", screenWidth / 2f, screenHeight / 2f, pausePaint)
+    }
+
+    // ====== PAUSE BUTTON ======
+    fun initializePauseButton(context: android.content.Context, screenWidth: Int, screenHeight: Int) {
+        try {
+            context.assets.open("UI/Pause_Button.png").use { inputStream ->
+                pauseButtonBitmap = BitmapFactory.decodeStream(inputStream)
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("HudRenderer", "Error loading pause button image", e)
+        }
+        
+        // Đặt nút pause ở góc dưới phải
+        pauseButtonX = screenWidth - pauseButtonSize - 80f
+        pauseButtonY = screenHeight - pauseButtonSize - 80f
+        pauseButtonRect.set(pauseButtonX, pauseButtonY, pauseButtonX + pauseButtonSize, pauseButtonY + pauseButtonSize)
+    }
+
+    private fun drawPauseButton(canvas: Canvas, screenWidth: Int, screenHeight: Int) {
+        if (pauseButtonBitmap != null && !pauseButtonBitmap!!.isRecycled) {
+            canvas.drawBitmap(pauseButtonBitmap!!, pauseButtonX, pauseButtonY, null)
+        } else {
+            // Fallback: vẽ nút pause đơn giản nếu không load được ảnh
+            val buttonPaint = Paint().apply {
+                color = Color.argb(200, 255, 255, 255)
+                style = Paint.Style.FILL
+            }
+            val borderPaint = Paint().apply {
+                color = Color.WHITE
+                style = Paint.Style.STROKE
+                strokeWidth = 3f
+            }
+            
+            canvas.drawRoundRect(pauseButtonRect, 10f, 10f, buttonPaint)
+            canvas.drawRoundRect(pauseButtonRect, 10f, 10f, borderPaint)
+            
+            // Vẽ icon pause (2 thanh dọc)
+            val iconPaint = Paint().apply {
+                color = Color.BLACK
+                style = Paint.Style.FILL
+            }
+            val barWidth = pauseButtonSize * 0.15f
+            val barHeight = pauseButtonSize * 0.4f
+            val barSpacing = pauseButtonSize * 0.1f
+            val centerX = pauseButtonX + pauseButtonSize / 2f
+            val centerY = pauseButtonY + pauseButtonSize / 2f
+            
+            val leftBarX = centerX - barSpacing / 2f - barWidth
+            val rightBarX = centerX + barSpacing / 2f
+            
+            canvas.drawRect(leftBarX, centerY - barHeight / 2f, leftBarX + barWidth, centerY + barHeight / 2f, iconPaint)
+            canvas.drawRect(rightBarX, centerY - barHeight / 2f, rightBarX + barWidth, centerY + barHeight / 2f, iconPaint)
+        }
+    }
+
+    fun isPauseButtonTouched(x: Float, y: Float): Boolean {
+        return pauseButtonRect.contains(x, y)
     }
 }

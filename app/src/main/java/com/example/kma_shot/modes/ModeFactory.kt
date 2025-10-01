@@ -11,7 +11,7 @@ class ModeFactory {
         fun createMode(modeId: String, context: Context, gameState: GameState): ModeContract {
             return when (modeId) {
                 "EASY" -> EasyMode(context, gameState)
-                "MEDIUM" -> MediumMode(context)
+                "MEDIUM" -> MediumMode(context, gameState)
                 "HARD" -> HardMode(context)
                 "EXTREME" -> ExtremeMode(context)
                 else -> EasyMode(context, gameState) // Default to easy

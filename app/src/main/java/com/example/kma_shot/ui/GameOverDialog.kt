@@ -116,15 +116,22 @@ class GameOverDialog : DialogFragment() {
             }
         }
         
-        btnHighScore.setOnClickListener {
-            try {
-                val intent = Intent(requireContext(), com.example.kma_shot.HighScoreActivity::class.java)
-                startActivity(intent)
-                dismiss()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
+btnHighScore.setOnClickListener {
+    try {
+        val act = requireActivity() // chính là GameActivity
+        // Mở Leaderboard
+        val intent = Intent(act, com.example.kma_shot.HighScoreActivity::class.java)
+        startActivity(intent)
+
+        // Loại GameActivity khỏi back stack để Back từ Leaderboard về GameModeSelectionActivity
+        act.finish()
+
+        // Đóng dialog
+        dismissAllowingStateLoss()
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
         
         btnMainMenu.setOnClickListener {
             try {

@@ -16,6 +16,9 @@ import com.example.kma_shot.modes.ModeContract
 import com.example.kma_shot.modes.ModeFactory // Đổi tên gameMode thành modeType trong hàm createMode
 import com.example.kma_shot.systems.HudRenderer
 import com.example.kma_shot.ui.GameOverDialog
+import com.example.kma_shot.ui.PauseMenuDialog
+import com.example.kma_shot.core.AudioManager
+import com.example.kma_shot.R
 
 class GameView(context: Context, private val gameModeTypeString: String) : SurfaceView(context), SurfaceHolder.Callback {
 
@@ -32,6 +35,11 @@ class GameView(context: Context, private val gameModeTypeString: String) : Surfa
 
     // Cờ để kiểm soát việc hiển thị dialog Game Over
     private var isGameOverDialogShown = false
+    
+    // Sound settings
+    private var isBackgroundMusicEnabled = true
+    private var isSoundEffectsEnabled = true
+    private val audioManager = AudioManager.getInstance(context)
 
     init {
         holder.addCallback(this)
@@ -61,6 +69,22 @@ class GameView(context: Context, private val gameModeTypeString: String) : Surfa
         }
 
         setupGameArea()
+        
+        // Initialize pause button
+        hudRenderer.initializePauseButton(context, screenWidth, screenHeight)
+        
+        // Initialize sound settings
+        isBackgroundMusicEnabled = audioManager.isMusicEnabled()
+        isSoundEffectsEnabled = audioManager.isSoundEnabled()
+        
+        // Start background music
+        audioManager.playBackgroundMusic(R.raw.bg_music)
+        
+        // Load sound effects
+        audioManager.loadSound(R.raw.paddlehit)
+        audioManager.loadSound(R.raw.paddleshot)
+        audioManager.loadSound(R.raw.brick_destroy)
+        audioManager.loadSound(R.raw.alert_ball)
 
         try {
             // Khởi tạo game mode
@@ -80,6 +104,10 @@ class GameView(context: Context, private val gameModeTypeString: String) : Surfa
         screenWidth = width
         screenHeight = height
         setupGameArea()
+        
+        // Reinitialize pause button with new dimensions
+        hudRenderer.initializePauseButton(context, screenWidth, screenHeight)
+        
         // Reinitialize mode with new screen dimensions
         currentMode?.initialize(context, screenWidth, screenHeight)
     }
@@ -98,6 +126,9 @@ class GameView(context: Context, private val gameModeTypeString: String) : Surfa
         gameThread = null // Giải phóng tham chiếu
         backgroundBitmap?.recycle() // Giải phóng bitmap nền
         backgroundBitmap = null
+        
+        // Stop and release sound resources
+        audioManager.stopBackgroundMusic()
     }
 
     private fun setupGameArea() {
@@ -184,19 +215,32 @@ class GameView(context: Context, private val gameModeTypeString: String) : Surfa
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        // Chỉ xử lý touch event nếu game không bị tạm dừng hoặc đã kết thúc và dialog đã hiển thị
-        if (gameState.isPaused || (gameState.isGameOver && isGameOverDialogShown)) {
-            return true // Vẫn tiêu thụ sự kiện để không bị truyền đi
-        }
-
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
+                // Kiểm tra nút pause trước
+                if (hudRenderer.isPauseButtonTouched(event.x, event.y)) {
+                    if (!gameState.isPaused && !gameState.isGameOver) {
+                        pause() // Gọi hàm pause() thay vì chỉ showPauseMenu()
+                    }
+                    return true
+                }
+                
+                // Nếu đang pause hoặc game over, không xử lý touch khác
+                if (gameState.isPaused || (gameState.isGameOver && isGameOverDialogShown)) {
+                    return true
+                }
+
                 if (!gameState.isGameRunning && !gameState.isGameOver) { // Chỉ bắt đầu game nếu chưa chạy và chưa game over
                     gameState.isGameRunning = true
                 }
                 currentMode?.handleInput(event.x, event.y)
             }
             MotionEvent.ACTION_MOVE -> {
+                // Nếu đang pause hoặc game over, không xử lý move
+                if (gameState.isPaused || (gameState.isGameOver && isGameOverDialogShown)) {
+                    return true
+                }
+                
                 if (gameState.isGameRunning) { // Chỉ xử lý move nếu game đang chạy
                     currentMode?.handleInput(event.x, event.y)
                 }
@@ -206,22 +250,29 @@ class GameView(context: Context, private val gameModeTypeString: String) : Surfa
     }
 
     fun pause() {
-        if (!gameState.isGameOver) { // Không cho pause nếu đã game over
+        if (!gameState.isGameOver) {
             gameState.isPaused = true
-            // Cân nhắc dừng gameThread ở đây nếu muốn tiết kiệm pin hoàn toàn khi pause
-            // gameThread?.setRunning(false)
+            audioManager.pauseBackgroundMusic()
+            // Giữ thread chạy để còn render và có thể resume mượt
+            showPauseMenu()
         }
     }
+        // Resume vẫn OK:
+        fun resume() {
+            gameState.isPaused = false
+            val am = AudioManager.getInstance(context)
 
-    fun resume() {
-        gameState.isPaused = false
-        // Nếu đã dừng gameThread khi pause, cần khởi tạo lại và start ở đây
-        // if (gameThread == null || !gameThread!!.isAlive) {
-        //     gameThread = GameLoop(this)
-        //     gameThread?.setRunning(true)
-        //     gameThread?.start()
-        // }
-    }
+            // Nếu nhạc bị disable thì thôi
+            if (!am.isMusicEnabled()) return
+
+            am.resumeBackgroundMusic()
+            // Nếu sau 50-100ms vẫn không phát (player null hoặc không playing), phát lại:
+            postDelayed({
+                am.startBackgroundMusic()
+            }, 100)
+        }
+
+
 
     fun getGameState(): GameState {
         return gameState
@@ -294,6 +345,63 @@ class GameView(context: Context, private val gameModeTypeString: String) : Surfa
             // Không cần start() lại nếu thread vẫn isAlive và chỉ bị dừng bằng cờ running
         }
         Log.d("GameView", "Game restarted.")
+    }
+
+    private fun showPauseMenu() {
+        if (context is FragmentActivity) {
+            val activity = context as FragmentActivity
+            
+            if (activity.isFinishing || activity.isDestroyed) {
+                Log.w("GameView", "Activity is finishing, cannot show PauseMenuDialog.")
+                return
+            }
+
+            try {
+                val dialog = PauseMenuDialog.newInstance(
+                    isBackgroundMusicEnabled,
+                    isSoundEffectsEnabled
+                )
+                
+                dialog.setPauseMenuListener(object : PauseMenuDialog.PauseMenuListener {
+                    override fun onContinue() {
+                        gameState.isPaused = false
+                        resume()
+                    }
+                    
+                    override fun onRestart() {
+                        restartGame()
+                    }
+                    
+                    override fun onMainMenu() {
+                        activity.finish()
+                    }
+                    
+                    override fun onBackgroundMusicToggle(isEnabled: Boolean) {
+                        isBackgroundMusicEnabled = isEnabled
+                        audioManager.setMusicEnabled(isEnabled)
+                        Log.d("GameView", "Background music: $isEnabled")
+                    }
+                    
+                    override fun onSoundEffectsToggle(isEnabled: Boolean) {
+                        isSoundEffectsEnabled = isEnabled
+                        audioManager.setSoundEnabled(isEnabled)
+                        Log.d("GameView", "Sound effects: $isEnabled")
+                        
+                        // Test sound effect để kiểm tra
+                        if (isEnabled) {
+                            audioManager.playSound(R.raw.paddlehit)
+                        }
+                    }
+                })
+                
+                dialog.isCancelable = false
+                dialog.show(activity.supportFragmentManager, "PauseMenuDialog")
+            } catch (e: IllegalStateException) {
+                Log.e("GameView", "Error showing PauseMenuDialog", e)
+            }
+        } else {
+            Log.e("GameView", "Context is not a FragmentActivity, cannot show PauseMenuDialog.")
+        }
     }
 
     // Game Loop class

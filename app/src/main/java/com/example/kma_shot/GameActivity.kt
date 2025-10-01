@@ -49,9 +49,13 @@ class GameActivity : FragmentActivity() {
     }
 
     override fun onBackPressed() {
-        // Pause game and show confirmation dialog
-        gameView.pause()
-        // TODO: Show pause menu or exit confirmation
-        super.onBackPressed()
+        // Nếu game đang chạy, hiển thị pause menu
+        if (!gameView.getGameState().isPaused && !gameView.getGameState().isGameOver) {
+            gameView.pause()
+            // Pause menu sẽ được hiển thị tự động khi pause
+        } else {
+            // Nếu đã pause hoặc game over, thoát activity
+            super.onBackPressed()
+        }
     }
 }
