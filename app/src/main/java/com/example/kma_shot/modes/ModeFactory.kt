@@ -12,7 +12,7 @@ class ModeFactory {
             return when (modeId) {
                 "EASY" -> EasyMode(context, gameState)
                 "MEDIUM" -> MediumMode(context, gameState)
-                "HARD" -> HardMode(context)
+                "HARD" -> HardMode(context, gameState)
                 "EXTREME" -> ExtremeMode(context)
                 else -> EasyMode(context, gameState) // Default to easy
             }
