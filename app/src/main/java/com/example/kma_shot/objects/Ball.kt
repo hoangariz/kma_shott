@@ -19,6 +19,11 @@ class Ball(
     private var bitmap: Bitmap? = null
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
     
+    // Afterimage effect
+    private data class AfterImage(var x: Float, var y: Float, var alpha: Int)
+    private val afterImages = mutableListOf<AfterImage>()
+    private val maxAfterImages = 5
+    
     enum class BallType {
         BLUE,   // ballblue.png
         GREY    // ballgrey.png
@@ -56,18 +61,43 @@ class Ball(
     fun update(deltaTime: Float) {
         if (!isActive) return
         
+        // Add current position to afterimages
+        if (velocityX != 0f || velocityY != 0f) {
+            afterImages.add(0, AfterImage(x, y, 150))
+            if (afterImages.size > maxAfterImages) {
+                afterImages.removeAt(afterImages.size - 1)
+            }
+        }
+        
         x += velocityX * deltaTime
         y += velocityY * deltaTime
+        
+        // Update afterimage alphas
+        afterImages.forEachIndexed { index, img ->
+            img.alpha = (150 - index * 30).coerceAtLeast(0)
+        }
     }
 
     fun draw(canvas: Canvas) {
         if (!isActive) return
         
-        bitmap?.let {
+        bitmap?.let { bmp ->
             val size = (radius * 2).toInt()
-            val scaledBitmap = Bitmap.createScaledBitmap(it, size, size, true)
+            
+            // Draw afterimages first
+            afterImages.forEach { img ->
+                val alphaPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                    alpha = img.alpha
+                }
+                val scaledBitmap = Bitmap.createScaledBitmap(bmp, size, size, true)
+                canvas.drawBitmap(scaledBitmap, img.x - radius, img.y - radius, alphaPaint)
+                if (scaledBitmap != bmp) scaledBitmap.recycle()
+            }
+            
+            // Draw main ball
+            val scaledBitmap = Bitmap.createScaledBitmap(bmp, size, size, true)
             canvas.drawBitmap(scaledBitmap, x - radius, y - radius, paint)
-            if (scaledBitmap != it) scaledBitmap.recycle()
+            if (scaledBitmap != bmp) scaledBitmap.recycle()
         }
     }
 
@@ -99,6 +129,7 @@ class Ball(
         velocityX = 0f
         velocityY = 0f
         isActive = true
+        afterImages.clear()
     }
     
     fun getDamage(): Int = 1

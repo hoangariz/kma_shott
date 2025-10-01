@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/dialog_background"
+    android:padding="24dp"
+    android:gravity="center">
+
+    <!-- Game Over Title -->
+    <TextView
+        android:id="@+id/tvGameOverTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="GAME OVER"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:textColor="@color/text_white"
+        android:shadowColor="@color/text_shadow"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="4"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Mode Info -->
+    <TextView
+        android:id="@+id/tvModeInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Easy Mode"
+        android:textSize="18sp"
+        android:textColor="@color/light_purple"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Stats Container -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/stats_background"
+        android:padding="20dp"
+        android:layout_marginBottom="24dp">
+
+        <!-- Score -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="12dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_score"
+                android:layout_marginEnd="12dp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Điểm số:"
+                android:textSize="16sp"
+                android:textColor="@color/text_white" />
+
+            <TextView
+                android:id="@+id/tvFinalScore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/button_start" />
+
+        </LinearLayout>
+
+        <!-- Time -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="12dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_time"
+                android:layout_marginEnd="12dp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Thời gian:"
+                android:textSize="16sp"
+                android:textColor="@color/text_white" />
+
+            <TextView
+                android:id="@+id/tvPlayTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00:00"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/button_start" />
+
+        </LinearLayout>
+
+        <!-- Bricks Destroyed -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_brick"
+                android:layout_marginEnd="12dp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Gạch phá:"
+                android:textSize="16sp"
+                android:textColor="@color/text_white" />
+
+            <TextView
+                android:id="@+id/tvBricksDestroyed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/button_start" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Buttons Container -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <!-- Restart Button -->
+        <Button
+            android:id="@+id/btnRestart"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="CHƠI LẠI"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:background="@drawable/button_restart"
+            android:textColor="@color/text_white"
+            android:layout_marginBottom="12dp" />
+
+        <!-- High Score Button -->
+        <Button
+            android:id="@+id/btnHighScore"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="BẢNG XẾP HẠNG"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:background="@drawable/button_highscore"
+            android:textColor="@color/text_white"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Main Menu Button -->
+        <Button
+            android:id="@+id/btnMainMenu"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="MENU CHÍNH"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:background="@drawable/button_main_menu"
+            android:textColor="@color/text_white" />
+
+    </LinearLayout>
+
+</LinearLayout>
+

@@ -10,7 +10,7 @@ interface ModeContract {
     fun getModeId(): String
     
     // Initialize mode-specific settings
-    fun initialize(screenWidth: Int, screenHeight: Int)
+    fun initialize(context: android.content.Context, screenWidth: Int, screenHeight: Int)
     
     // Update game logic
     fun update(deltaTime: Float)

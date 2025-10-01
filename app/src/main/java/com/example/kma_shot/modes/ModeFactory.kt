@@ -1,19 +1,20 @@
 package com.example.kma_shot.modes
 
 import android.content.Context
+import com.example.kma_shot.core.GameState
 
 class ModeFactory {
 
     companion object {
-        // TODO: Factory để tạo mode phù hợp theo menu selection
+        // Factory để tạo mode phù hợp theo menu selection
         
-        fun createMode(modeId: String, context: Context): ModeContract {
+        fun createMode(modeId: String, context: Context, gameState: GameState): ModeContract {
             return when (modeId) {
-                "EASY" -> EasyMode(context)
+                "EASY" -> EasyMode(context, gameState)
                 "MEDIUM" -> MediumMode(context)
                 "HARD" -> HardMode(context)
                 "EXTREME" -> ExtremeMode(context)
-                else -> EasyMode(context) // Default to easy
+                else -> EasyMode(context, gameState) // Default to easy
             }
         }
 

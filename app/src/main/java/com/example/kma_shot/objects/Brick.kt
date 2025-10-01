@@ -33,22 +33,29 @@ class Brick(
         fun loadBitmaps(context: Context) {
             val assetManager = context.assets
             
-            // Load brick sprites
-            bitmapCache["red"] = BitmapFactory.decodeStream(
-                assetManager.open("bricks/element_red_rectangle.png")
-            )
-            bitmapCache["yellow"] = BitmapFactory.decodeStream(
-                assetManager.open("bricks/element_yellow_rectangle.png")
-            )
-            bitmapCache["blue"] = BitmapFactory.decodeStream(
-                assetManager.open("bricks/element_blue_rectangle.png")
-            )
-            bitmapCache["green"] = BitmapFactory.decodeStream(
-                assetManager.open("bricks/element_green_rectangle.png")
-            )
-            bitmapCache["unbreakable"] = BitmapFactory.decodeStream(
-                assetManager.open("bricks/element_grey_rectangle_unbreak.png")
-            )
+            try {
+                // Load brick sprites with damage states
+                bitmapCache["blue"] = BitmapFactory.decodeStream(
+                    assetManager.open("bricks/blue.png")
+                )
+                bitmapCache["yellow"] = BitmapFactory.decodeStream(
+                    assetManager.open("bricks/yellow.png")
+                )
+                bitmapCache["yellow1"] = BitmapFactory.decodeStream(
+                    assetManager.open("bricks/yellow1.png")
+                )
+                bitmapCache["red"] = BitmapFactory.decodeStream(
+                    assetManager.open("bricks/red.png")
+                )
+                bitmapCache["red1"] = BitmapFactory.decodeStream(
+                    assetManager.open("bricks/red1.png")
+                )
+                bitmapCache["red2"] = BitmapFactory.decodeStream(
+                    assetManager.open("bricks/red2.png")
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
         fun clearBitmaps() {
@@ -90,23 +97,23 @@ class Brick(
         bitmap = when (type) {
             BrickType.RED -> {
                 when (currentHealth) {
-                    3 -> bitmapCache["red"]
-                    2 -> bitmapCache["green"] // red1 state
-                    1 -> bitmapCache["yellow"] // red2 state
+                    3 -> bitmapCache["red"]      // red.png (3 máu)
+                    2 -> bitmapCache["red1"]     // red1.png (2 máu)
+                    1 -> bitmapCache["red2"]     // red2.png (1 máu)
                     else -> null
                 }
             }
             BrickType.YELLOW -> {
                 when (currentHealth) {
-                    2 -> bitmapCache["yellow"]
-                    1 -> bitmapCache["green"] // yellow1 state
+                    2 -> bitmapCache["yellow"]   // yellow.png (2 máu)
+                    1 -> bitmapCache["yellow1"]  // yellow1.png (1 máu)
                     else -> null
                 }
             }
             BrickType.BLUE -> {
-                if (currentHealth > 0) bitmapCache["blue"] else null
+                if (currentHealth > 0) bitmapCache["blue"] else null  // blue.png (1 máu)
             }
-            BrickType.UNBREAKABLE -> bitmapCache["unbreakable"]
+            BrickType.UNBREAKABLE -> null // Chưa có sprite
         }
     }
 
@@ -143,11 +150,7 @@ class Brick(
     }
 
     fun getScore(): Int {
-        return when (type) {
-            BrickType.RED -> 30
-            BrickType.YELLOW -> 20
-            BrickType.BLUE -> 10
-            BrickType.UNBREAKABLE -> 0
-        }
+        // Tất cả bricks đều 10 điểm (theo yêu cầu)
+        return 10
     }
 }

@@ -4,14 +4,15 @@ import com.example.kma_shot.data.db.dao.HighScoreDao
 import com.example.kma_shot.data.db.entity.HighScoreEntity
 import com.example.kma_shot.data.model.HighScore
 
-class ScoreRepository(private val highScoreDao: HighScoreDao) {
+class ScoreRepository(context: android.content.Context) {
+    private val highScoreDao: HighScoreDao = com.example.kma_shot.data.db.AppDatabase.getDatabase(context).highScoreDao()
     
     // Insert new score and return ID
-    suspend fun insertScore(modeId: String, score: Int, survivalTime: Float): Long {
+    suspend fun insertScore(modeId: String, score: Int, survivalTime: Long): Long {
         val entity = HighScoreEntity(
             modeId = modeId,
             score = score,
-            survivalTime = survivalTime,
+            survivalTime = survivalTime.toFloat(),
             timestamp = System.currentTimeMillis()
         )
         return highScoreDao.insert(entity)

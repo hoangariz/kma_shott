@@ -25,6 +25,10 @@ class Enemy(
     var shootCooldown = 0f
     var shootInterval = 2f // Bắn mỗi 2 giây
     
+    // Flash/blink effect when hit
+    private var flashTimer = 0f
+    private var isFlashing = false
+    
     private var bitmap: Bitmap? = null
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
@@ -108,6 +112,14 @@ class Enemy(
         // Shooting cooldown
         shootCooldown -= deltaTime
         canShoot = shootCooldown <= 0
+        
+        // Update flash effect
+        if (isFlashing) {
+            flashTimer -= deltaTime
+            if (flashTimer <= 0) {
+                isFlashing = false
+            }
+        }
     }
 
     fun shoot(): Bullet? {
@@ -130,6 +142,11 @@ class Enemy(
     fun draw(canvas: Canvas) {
         if (!isAlive) return
         
+        // Skip drawing if flashing (blinking effect)
+        if (isFlashing && (flashTimer * 10).toInt() % 2 == 0) {
+            return
+        }
+        
         bitmap?.let {
             val scaledBitmap = Bitmap.createScaledBitmap(
                 it,
@@ -147,6 +164,10 @@ class Enemy(
         if (currentHealth <= 0) {
             currentHealth = 0
             isAlive = false
+        } else {
+            // Start flash effect
+            isFlashing = true
+            flashTimer = 0.5f // Flash for 0.5 seconds
         }
     }
 

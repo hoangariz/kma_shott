@@ -3,7 +3,7 @@ package com.example.kma_shot.core
 class GameState {
     
     // Player stats
-    var playerHealth = 10
+    var playerHealth = 1
     var maxHealth = 10
     var mana = 0
     var maxMana = 3
@@ -39,7 +39,13 @@ class GameState {
     
     fun updateTime(deltaTime: Float) {
         if (isGameRunning && !isPaused) {
-            gameTime += deltaTime
+            gameTime -= deltaTime // Countdown
+            
+            if (gameTime <= 0) {
+                gameTime = 0f
+                isGameOver = true
+                isGameRunning = false
+            }
         }
     }
     

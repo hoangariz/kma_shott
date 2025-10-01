@@ -23,7 +23,7 @@ class ExtremeMode(private val context: Context) : ModeContract {
 
     override fun getModeId() = "EXTREME"
 
-    override fun initialize(screenWidth: Int, screenHeight: Int) {
+    override fun initialize(context: android.content.Context, screenWidth: Int, screenHeight: Int) {
         // TODO: Initialize extreme mode with enemies
         val paddle = Paddle(
             x = screenWidth / 2f - 75f,

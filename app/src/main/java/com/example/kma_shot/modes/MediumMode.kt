@@ -19,7 +19,7 @@ class MediumMode(private val context: Context) : ModeContract {
 
     override fun getModeId() = "MEDIUM"
 
-    override fun initialize(screenWidth: Int, screenHeight: Int) {
+    override fun initialize(context: android.content.Context, screenWidth: Int, screenHeight: Int) {
         // TODO: Initialize 2 linked paddles
         // Paddle trên
         val topPaddle = Paddle(

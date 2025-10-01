@@ -29,6 +29,10 @@ class Paddle(
     var invincibleTimer = 0f
     var rapidFireTimer = 0f
     
+    // Flash/blink effect when hit
+    private var flashTimer = 0f
+    private var isFlashing = false
+    
     private var bitmap: Bitmap? = null
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
@@ -100,6 +104,14 @@ class Paddle(
                 updateBitmap()
             }
         }
+        
+        // Update flash effect
+        if (isFlashing) {
+            flashTimer -= deltaTime
+            if (flashTimer <= 0) {
+                isFlashing = false
+            }
+        }
     }
 
     fun shoot(): Bullet? {
@@ -135,6 +147,11 @@ class Paddle(
     }
 
     fun draw(canvas: Canvas) {
+        // Skip drawing if flashing (blinking effect)
+        if (isFlashing && (flashTimer * 10).toInt() % 2 == 0) {
+            return
+        }
+        
         bitmap?.let {
             val scaledBitmap = Bitmap.createScaledBitmap(
                 it,
@@ -156,6 +173,10 @@ class Paddle(
         
         currentHealth -= damage
         if (currentHealth < 0) currentHealth = 0
+        
+        // Start flash effect
+        isFlashing = true
+        flashTimer = 0.5f // Flash for 0.5 seconds
     }
 
     fun heal(amount: Int) {

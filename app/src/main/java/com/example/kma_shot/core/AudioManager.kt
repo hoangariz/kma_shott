@@ -5,6 +5,7 @@ import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.media.SoundPool
 import android.util.Log
+import com.example.kma_shot.R
 
 class AudioManager private constructor(private val context: Context) {
 
@@ -197,6 +198,46 @@ class AudioManager private constructor(private val context: Context) {
      * Check if sound effects are enabled
      */
     fun isSoundEnabled(): Boolean = isSoundEnabled
+
+    // Game-specific sound effects
+    fun playBallPaddleSound() {
+        playSound(R.raw.paddlehit)
+    }
+    
+    fun playBallBrickSound() {
+        playSound(R.raw.brick_destroy)
+    }
+    
+    fun playBrickBreakSound() {
+        playSound(R.raw.brick_destroy)
+    }
+    
+    fun playPaddleShotSound() {
+        playSound(R.raw.paddleshot)
+    }
+    
+    fun playAlertBallSound() {
+        playSound(R.raw.alert_ball)
+    }
+    
+    fun playPowerUpSound() {
+        // playSound(R.raw.powerup) // TODO: Add powerup sound file
+    }
+    
+    fun playWinSound() {
+        // playSound(R.raw.win) // TODO: Add win sound file
+    }
+    
+    fun playLoseSound() {
+        // playSound(R.raw.lose) // TODO: Add lose sound file
+    }
+    
+    /**
+     * Start background music for the game
+     */
+    fun startBackgroundMusic() {
+        playBackgroundMusic(R.raw.bg_music)
+    }
 
     /**
      * Release all resources

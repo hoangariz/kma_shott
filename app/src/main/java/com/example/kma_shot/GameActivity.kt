@@ -3,10 +3,10 @@ package com.example.kma_shot
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentActivity
 import com.example.kma_shot.engine.GameView
 
-class GameActivity : AppCompatActivity() {
+class GameActivity : FragmentActivity() {
 
     private lateinit var gameView: GameView
     private var gameMode = "EASY"
@@ -29,6 +29,9 @@ class GameActivity : AppCompatActivity() {
         
         // Get game mode from intent
         gameMode = intent.getStringExtra("GAME_MODE") ?: "EASY"
+        
+        // Debug: Log game mode
+        android.util.Log.d("GameActivity", "Game mode: $gameMode")
         
         // Create and set game view
         gameView = GameView(this, gameMode)

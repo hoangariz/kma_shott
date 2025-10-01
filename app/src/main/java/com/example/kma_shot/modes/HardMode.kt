@@ -20,7 +20,7 @@ class HardMode(private val context: Context) : ModeContract {
 
     override fun getModeId() = "HARD"
 
-    override fun initialize(screenWidth: Int, screenHeight: Int) {
+    override fun initialize(context: android.content.Context, screenWidth: Int, screenHeight: Int) {
         // TODO: Initialize 2 inverted paddles + asteroids
         val topPaddle = Paddle(
             x = screenWidth / 2f - 75f,
