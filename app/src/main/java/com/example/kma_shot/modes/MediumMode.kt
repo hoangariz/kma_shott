@@ -154,7 +154,8 @@ class MediumMode(private val context: Context, private val gameState: GameState)
                     audioManager.playBrickBreakSound()
                     gameState.addScore(brick.getScore())
                     dropTableSystem.rollDrop(brick.x + brick.width / 2, brick.y)?.let { p ->
-                        if (p.type != PowerUp.PowerUpType.ENERGY) {
+                        if (p.type != PowerUp.PowerUpType.MULTI_BALL &&
+                            p.type != PowerUp.PowerUpType.ENERGY) {
                             p.loadBitmap(context)
                             powerUps.add(p)
                             audioManager.playPowerUpSound()
@@ -172,7 +173,8 @@ class MediumMode(private val context: Context, private val gameState: GameState)
                     if (brick.isDestroyed) {
                         gameState.addScore(brick.getScore())
                         dropTableSystem.rollDrop(brick.x + brick.width / 2, brick.y)?.let { p ->
-                            if (p.type != PowerUp.PowerUpType.ENERGY) {
+                            if (p.type != PowerUp.PowerUpType.MULTI_BALL &&
+                                p.type != PowerUp.PowerUpType.ENERGY) {
                                 p.loadBitmap(context)
                                 powerUps.add(p)
                                 audioManager.playPowerUpSound()

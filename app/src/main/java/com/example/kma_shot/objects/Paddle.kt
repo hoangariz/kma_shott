@@ -16,23 +16,23 @@ class Paddle(
     var velocityX = 0f
     var maxHealth = 5
     var currentHealth = 5
-    
+
     // Shooting mechanics
     var bulletCount = 0
     var canShoot = false
     var shootCooldown = 0f
     var shootInterval = 0.3f // Bắn mỗi 0.3 giây
-    
+
     // Energy system
     var energyCount = 0
     var isInvincible = false
     var invincibleTimer = 0f
     var rapidFireTimer = 0f
-    
+
     // Flash/blink effect when hit
     private var flashTimer = 0f
     private var isFlashing = false
-    
+
     private var bitmap: Bitmap? = null
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
@@ -43,7 +43,7 @@ class Paddle(
 
     companion object {
         private val bitmapCache = mutableMapOf<String, Bitmap>()
-        
+
         fun loadBitmaps(context: Context) {
             val assetManager = context.assets
             try {
@@ -57,7 +57,7 @@ class Paddle(
                 e.printStackTrace()
             }
         }
-        
+
         fun clearBitmaps() {
             bitmapCache.values.forEach { it.recycle() }
             bitmapCache.clear()
@@ -71,32 +71,32 @@ class Paddle(
         updateBitmap()
     }
 
+    // SỬA: ưu tiên đỏ khi invincible; nếu không, vẽ theo type (BLUE/RED)
     private fun updateBitmap() {
-        // Use red paddle when invincible, blue otherwise
-        bitmap = if (isInvincible) {
-            bitmapCache["red"]
-        } else {
-            bitmapCache["blue"]
+        bitmap = when {
+            isInvincible -> bitmapCache["red"]
+            type == PaddleType.RED -> bitmapCache["red"]
+            else -> bitmapCache["blue"]
         }
     }
 
     fun update(touchX: Float, deltaTime: Float, screenWidth: Int) {
         // Update position to follow touch
         x = touchX - width / 2
-        
+
         // Keep paddle within screen bounds
         if (x < 0) x = 0f
         if (x + width > screenWidth) x = screenWidth - width
-        
+
         // Update shooting cooldown
         shootCooldown -= deltaTime
         canShoot = shootCooldown <= 0 && bulletCount > 0
-        
+
         // Update invincibility and rapid fire
         if (isInvincible) {
             invincibleTimer -= deltaTime
             rapidFireTimer -= deltaTime
-            
+
             if (invincibleTimer <= 0) {
                 isInvincible = false
                 invincibleTimer = 0f
@@ -104,7 +104,7 @@ class Paddle(
                 updateBitmap()
             }
         }
-        
+
         // Update flash effect
         if (isFlashing) {
             flashTimer -= deltaTime
@@ -115,10 +115,10 @@ class Paddle(
     }
 
     fun shoot(): Bullet? {
-        // Rapid fire mode when invincible
+        // Rapid fire mode when invincible (giữ nguyên hành vi gốc)
         if (isInvincible && rapidFireTimer > 0) {
             shootCooldown = 0.1f // Bắn nhanh hơn
-            
+
             val bullet = Bullet(
                 x = x + width / 2 - 5,
                 y = y - 30,
@@ -128,13 +128,13 @@ class Paddle(
             )
             return bullet
         }
-        
+
         // Normal shooting
         if (!canShoot || bulletCount <= 0) return null
-        
+
         shootCooldown = shootInterval
         bulletCount--
-        
+
         val bullet = Bullet(
             x = x + width / 2 - 5,
             y = y - 30,
@@ -142,7 +142,7 @@ class Paddle(
             height = 30f,
             type = Bullet.BulletType.PLAYER
         )
-        
+
         return bullet
     }
 
@@ -151,7 +151,7 @@ class Paddle(
         if (isFlashing && (flashTimer * 10).toInt() % 2 == 0) {
             return
         }
-        
+
         bitmap?.let {
             val scaledBitmap = Bitmap.createScaledBitmap(
                 it,
@@ -170,10 +170,10 @@ class Paddle(
 
     fun takeDamage(damage: Int) {
         if (isInvincible) return // Không nhận damage khi invincible
-        
+
         currentHealth -= damage
         if (currentHealth < 0) currentHealth = 0
-        
+
         // Start flash effect
         isFlashing = true
         flashTimer = 0.5f // Flash for 0.5 seconds
@@ -188,16 +188,28 @@ class Paddle(
         bulletCount += amount
     }
 
+    // SỬA: chỉ tăng energy, KHÔNG auto-invincible, tránh xung đột với HardMode
     fun addEnergy() {
         energyCount++
-        if (energyCount >= 3) {
-            // Activate invincibility and rapid fire
-            energyCount = 0
-            isInvincible = true
-            invincibleTimer = 3f
-            rapidFireTimer = 3f
-            updateBitmap()
-        }
+    }
+
+    // MỚI: cho phép HardMode bật invincible theo thời lượng mong muốn
+    fun setInvincible(durationSec: Float) {
+        isInvincible = true
+        invincibleTimer = durationSec
+        rapidFireTimer = durationSec
+        updateBitmap()
+    }
+
+    // MỚI: đổi type thủ công (BLUE/RED) khi cần
+    fun changeType(newType: PaddleType) {
+        type = newType
+        updateBitmap()
+    }
+
+    // MỚI: reset năng lượng khi HardMode xử lý combo
+    fun resetEnergy() {
+        energyCount = 0
     }
 
     fun isDead(): Boolean {

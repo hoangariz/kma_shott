@@ -177,7 +177,8 @@ class EasyMode(private val context: Context, private val gameState: GameState) :
                     
                     // Drop power-up (25% chance)
                     dropTableSystem.rollDrop(brick.x + brick.width/2, brick.y)?.let { powerUp ->
-                        if (powerUp.type != PowerUp.PowerUpType.ENERGY) {
+                        if (powerUp.type != PowerUp.PowerUpType.MULTI_BALL &&
+                            powerUp.type != PowerUp.PowerUpType.ENERGY) {
                             powerUp.loadBitmap(context)
                             powerUps.add(powerUp)
                             audioManager.playPowerUpSound()
@@ -199,7 +200,8 @@ class EasyMode(private val context: Context, private val gameState: GameState) :
                         
                         // Drop power-up
                         dropTableSystem.rollDrop(brick.x + brick.width/2, brick.y)?.let { powerUp ->
-                            if (powerUp.type != PowerUp.PowerUpType.ENERGY) {
+                            if (powerUp.type != PowerUp.PowerUpType.MULTI_BALL &&
+                                powerUp.type != PowerUp.PowerUpType.ENERGY)  {
                                 powerUp.loadBitmap(context)
                                 powerUps.add(powerUp)
                                 audioManager.playPowerUpSound()

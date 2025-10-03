@@ -51,7 +51,7 @@ class HardMode(private val context: Context, private val gameState: GameState) :
 
     // Tăng tốc thiên thạch theo thời gian
     private val asteroidBaseVy  = 240f
-    private val asteroidAccelVy = 240f // +240 trong 180s
+    private val asteroidAccelVy = 240f
     private val asteroidBaseVx  = 90f
 
     // Double tap để bắn
@@ -62,6 +62,18 @@ class HardMode(private val context: Context, private val gameState: GameState) :
     private var paddleTopBlinkTimer    = 0f
     private var paddleBottomBlinkTimer = 0f
     private val blinkDuration = 0.9f
+
+    // ==== NEW: Trạng thái ẩn/hiện cho TOP ====
+    private var isTopPaddleDisabled = false
+    private var topPaddleDisableTimer = 0f
+    private val topPaddleDisableDuration = 5f
+
+    // ==== NEW: Đổi màu BOTTOM 5 giây rồi trả về ====
+    private var bottomPaddleRedTimer = 0f
+    private var bottomPaddleOriginalType = Paddle.PaddleType.BLUE
+
+    // ==== NEW: Heal full khi kích hoạt combo ====
+    private val fullHealthValueOnCombo = 10
 
     override fun getModeId() = "HARD"
 
@@ -96,18 +108,24 @@ class HardMode(private val context: Context, private val gameState: GameState) :
         // Gạch đầu màn
         generateInitialBricks()
 
-        // Power-up như EasyMode (chỉnh 0.10f nếu bạn đang giảm)
-        dropTableSystem.setDropRate(0.25f)
+        dropTableSystem.setDropRate(0.7f)
 
         // Trạng thái
         gameState.playerHealth = 5
         gameState.gameTime = 180f
         gameState.isGameRunning = false
 
+        // Timers & flags
         spawnTimer = 0f
         currentSpawnInterval = 1.0f
         asteroidSpawnTimer = 0f
         asteroidSpawnInterval = 2.2f
+
+        // NEW: reset cờ TOP + màu BOTTOM
+        isTopPaddleDisabled = false
+        topPaddleDisableTimer = 0f
+        bottomPaddleRedTimer = 0f
+        bottomPaddleOriginalType = paddleBottom.type
     }
 
     private fun generateInitialBricks() {
@@ -169,6 +187,35 @@ class HardMode(private val context: Context, private val gameState: GameState) :
         asteroids.add(a)
     }
 
+    // ==== NEW: Kích hoạt combo khi đủ 3 ENERGY ====
+    private fun triggerTopDisableCombo() {
+        // 1) Ẩn paddle TOP 5 giây
+        isTopPaddleDisabled = true
+        topPaddleDisableTimer = topPaddleDisableDuration
+
+        // 2) Hồi full máu = 10
+        gameState.playerHealth = fullHealthValueOnCombo
+
+        // 3) Reset ENERGY (HUD dùng gameState.mana)
+        gameState.mana = 0
+        try {
+            paddleTop.resetEnergy()
+            paddleBottom.resetEnergy()
+        } catch (_: Throwable) {}
+
+        // 4) BOTTOM sang đỏ 5 giây
+        bottomPaddleRedTimer = 5f
+        bottomPaddleOriginalType = paddleBottom.type
+        try {
+            paddleBottom.changeType(Paddle.PaddleType.RED)
+        } catch (_: Throwable) {
+            // nếu bạn dùng invincible để tô đỏ
+            try { paddleBottom.setInvincible(5f) } catch (_: Throwable) {}
+        }
+
+        audioManager.playPowerUpSound()
+    }
+
     override fun update(deltaTime: Float) {
         if (!gameState.isGameRunning || gameState.isGameOver) return
 
@@ -185,40 +232,62 @@ class HardMode(private val context: Context, private val gameState: GameState) :
 
         powerUps.forEach { it.update(deltaTime) }
         powerUps.removeAll { !it.isActive }
-
+// xóa thien thach
         asteroids.forEach { it.update(deltaTime) }
 
-        // bỏ asteroid ra khỏi màn (dùng bounds.bottom, tránh lỗi radius)
-        asteroids.removeAll { a ->
-            !a.isActive || a.getBounds().bottom > gameState.gameAreaBottom + 40f
-        }
+        val left   = gameState.gameAreaLeft
+        val right  = gameState.gameAreaRight
+        val bottom = gameState.gameAreaBottom
 
+        asteroids.removeAll { a ->
+            val r = a.getBounds()
+            !a.isActive ||
+                    r.bottom > bottom + 40f ||  // ra khỏi đáy (giữ như cũ)
+                    r.left  <= left  ||         // CHẠM mép trái → cắt
+                    r.right >= right            // CHẠM mép phải → cắt
+        }
         // blink timer
         paddleTopBlinkTimer    = max(0f, paddleTopBlinkTimer    - deltaTime)
         paddleBottomBlinkTimer = max(0f, paddleBottomBlinkTimer - deltaTime)
 
+        // ==== NEW: đếm lùi ẩn TOP ====
+        if (isTopPaddleDisabled) {
+            topPaddleDisableTimer -= deltaTime
+            if (topPaddleDisableTimer <= 0f) {
+                isTopPaddleDisabled = false
+                topPaddleDisableTimer = 0f
+            }
+        }
+
+        // ==== NEW: đếm lùi màu đỏ cho BOTTOM và trả về màu gốc ====
+        if (bottomPaddleRedTimer > 0f) {
+            bottomPaddleRedTimer -= deltaTime
+            if (bottomPaddleRedTimer <= 0f) {
+                bottomPaddleRedTimer = 0f
+                try {
+                    paddleBottom.changeType(bottomPaddleOriginalType)
+                } catch (_: Throwable) {
+                    // nếu dùng invincible để tô đỏ → tắt
+                    try { paddleBottom.setInvincible(0f) } catch (_: Throwable) {}
+                }
+            }
+        }
+
         // spawn gạch
         spawnTimer += deltaTime
         if (spawnTimer >= currentSpawnInterval) {
-            spawnNewBrick()
-            spawnTimer = 0f
+            spawnNewBrick(); spawnTimer = 0f
         }
 
         // spawn thiên thạch
         asteroidSpawnTimer += deltaTime
         if (asteroidSpawnTimer >= asteroidSpawnInterval) {
-            spawnAsteroid()
-            asteroidSpawnTimer = 0f
+            spawnAsteroid(); asteroidSpawnTimer = 0f
         }
 
         // ====== COLLISIONS ======
-
-        // Chỉ phản xạ tường trái/phải
         handleSideWalls(ball)
-        // Và trần (để bóng không thoát lên trên ở mode này)
         handleCeiling(ball)
-
-        // Bóng vs paddle: bottom (đi xuống), top (đi lên)
         collideBallWithBottomPaddle()
         collideBallWithTopPaddle()
 
@@ -230,8 +299,9 @@ class HardMode(private val context: Context, private val gameState: GameState) :
                     audioManager.playBrickBreakSound()
                     gameState.addScore(brick.getScore())
                     dropTableSystem.rollDrop(brick.x + brick.width/2f, brick.y)?.let { p ->
-                        if (p.type != PowerUp.PowerUpType.ENERGY) {
-                            p.loadBitmap(context); powerUps.add(p)
+                        if (p.type != PowerUp.PowerUpType.MULTI_BALL)  {
+                            p.loadBitmap(context)
+                            powerUps.add(p)
                             audioManager.playPowerUpSound()
                         }
                     }
@@ -247,8 +317,9 @@ class HardMode(private val context: Context, private val gameState: GameState) :
                     if (brick.isDestroyed) {
                         gameState.addScore(brick.getScore())
                         dropTableSystem.rollDrop(brick.x + brick.width/2f, brick.y)?.let { p ->
-                            if (p.type != PowerUp.PowerUpType.ENERGY) {
-                                p.loadBitmap(context); powerUps.add(p)
+                            if (p.type != PowerUp.PowerUpType.MULTI_BALL)  {
+                                p.loadBitmap(context)
+                                powerUps.add(p)
                                 audioManager.playPowerUpSound()
                             }
                         }
@@ -257,16 +328,16 @@ class HardMode(private val context: Context, private val gameState: GameState) :
             }
         }
 
-        // PowerUp nhặt bởi cả 2 paddle
+        // PowerUp nhặt bởi cả 2 paddle (TOP đang ẩn thì không nhặt)
         powerUps.forEach { p ->
-            val hitTop    = !p.isCollected && RectF.intersects(p.getBounds(), paddleTop.getBounds())
+            val hitTop    = !isTopPaddleDisabled && !p.isCollected && RectF.intersects(p.getBounds(), paddleTop.getBounds())
             val hitBottom = !p.isCollected && RectF.intersects(p.getBounds(), paddleBottom.getBounds())
             if (hitTop || hitBottom) collectPowerUp(p)
         }
 
-        // Asteroid vs paddle → trừ HP, nháy
+        // Asteroid vs paddle (TOP đang ẩn thì không nhận va chạm)
         asteroids.forEach { a ->
-            val hitTop    = RectF.intersects(a.getBounds(), paddleTop.getBounds())
+            val hitTop    = !isTopPaddleDisabled && RectF.intersects(a.getBounds(), paddleTop.getBounds())
             val hitBottom = RectF.intersects(a.getBounds(), paddleBottom.getBounds())
             if (hitTop) {
                 a.isActive = false; paddleTopBlinkTimer = blinkDuration
@@ -332,6 +403,7 @@ class HardMode(private val context: Context, private val gameState: GameState) :
     }
 
     private fun collideBallWithTopPaddle() {
+        if (isTopPaddleDisabled) return // NEW: đang ẩn TOP thì bỏ va chạm
         if (ball.velocityY >= 0f) return
         val r  = ball.radius
         val br = ball.getBounds()
@@ -354,6 +426,10 @@ class HardMode(private val context: Context, private val gameState: GameState) :
                 gameState.addMana(1)
                 paddleTop.addEnergy()
                 paddleBottom.addEnergy()
+                // Đủ 3 năng lượng ⇒ kích hoạt combo
+                if (gameState.mana >= 3 && !isTopPaddleDisabled) {
+                    triggerTopDisableCombo()
+                }
             }
             PowerUp.PowerUpType.MULTI_BALL -> { /* mở rộng sau */ }
         }
@@ -370,10 +446,13 @@ class HardMode(private val context: Context, private val gameState: GameState) :
         bullets.forEach { it.draw(canvas) }
         // bóng
         ball.draw(canvas)
-        // paddles (blink)
-        if (paddleTopBlinkTimer > 0f) {
-            if ((paddleTopBlinkTimer * 12f).toInt() % 2 == 0) paddleTop.draw(canvas)
-        } else paddleTop.draw(canvas)
+
+        // paddles (blink) — TOP đang ẩn thì không vẽ
+        if (!isTopPaddleDisabled) {
+            if (paddleTopBlinkTimer > 0f) {
+                if ((paddleTopBlinkTimer * 12f).toInt() % 2 == 0) paddleTop.draw(canvas)
+            } else paddleTop.draw(canvas)
+        }
 
         if (paddleBottomBlinkTimer > 0f) {
             if ((paddleBottomBlinkTimer * 12f).toInt() % 2 == 0) paddleBottom.draw(canvas)
@@ -390,14 +469,13 @@ class HardMode(private val context: Context, private val gameState: GameState) :
         paddleBottom.x = bottomClamped
 
         // 2) Paddle TRÊN chạy NGƯỢC (gương) quanh centerX
-        //    - Lấy tâm của paddle dưới rồi phản chiếu qua centerX
         val bottomCenter = paddleBottom.x + paddleBottom.width / 2f
         val topCenterMirrored = 2f * centerX - bottomCenter
         val topNewX = topCenterMirrored - paddleTop.width / 2f
         val topClamped = clampToArea(topNewX, paddleTop.width)
-        paddleTop.x = topClamped
+        paddleTop.x = topClamped  // vẫn cập nhật để khi hiện lại không "nhảy"
 
-        // 3) Double-tap để bắn (nếu đang dùng cơ chế bắn)
+        // 3) Double-tap để bắn (TOP đang ẩn thì không bắn)
         val now = System.currentTimeMillis()
         if (now - lastTapTime < doubleTapGap) {
             if (gameState.bulletCount > 0 && paddleBottom.shootCooldown <= 0f) {
@@ -406,7 +484,7 @@ class HardMode(private val context: Context, private val gameState: GameState) :
                     gameState.useBullet(); paddleBottom.shootCooldown = paddleBottom.shootInterval
                 }
             }
-            if (gameState.bulletCount > 0 && paddleTop.shootCooldown <= 0f) {
+            if (!isTopPaddleDisabled && gameState.bulletCount > 0 && paddleTop.shootCooldown <= 0f) {
                 paddleTop.shoot()?.let { b ->
                     b.loadBitmap(context); bullets.add(b)
                     gameState.useBullet(); paddleTop.shootCooldown = paddleTop.shootInterval
