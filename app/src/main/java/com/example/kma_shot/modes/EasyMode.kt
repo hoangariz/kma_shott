@@ -58,15 +58,15 @@ class EasyMode(private val context: Context, private val gameState: GameState) :
         generateInitialBricks()
         
         // Set drop rate to 25%
-        dropTableSystem.setDropRate(0.25f)
+        dropTableSystem.setDropRate(0.20f)
         
-        gameState.playerHealth = 1
+        gameState.playerHealth = 3
         gameState.gameTime = 180f // 3 minutes countdown
         gameState.isGameRunning = false // Wait for touch to start
     }
 
     private fun generateInitialBricks() {
-        val rows = 5
+        val rows = 7
         val cols = 7
         val brickWidth = (gameState.gameAreaWidth - 20) / cols
         val brickHeight = 35f

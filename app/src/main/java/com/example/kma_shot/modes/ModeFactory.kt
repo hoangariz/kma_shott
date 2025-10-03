@@ -13,7 +13,7 @@ class ModeFactory {
                 "EASY" -> EasyMode(context, gameState)
                 "MEDIUM" -> MediumMode(context, gameState)
                 "HARD" -> HardMode(context, gameState)
-                "EXTREME" -> ExtremeMode(context)
+                "EXTREME" -> ExtremeMode(context, gameState)
                 else -> EasyMode(context, gameState) // Default to easy
             }
         }

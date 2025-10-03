@@ -216,7 +216,7 @@ class AudioManager private constructor(private val context: Context) {
     fun playAlertBallSound()   = playSound(R.raw.alert_ball)
 
     fun playPowerUpSound()     = playSound(R.raw.collect_item)
-    fun powerUpPickSound()     = playSound(R.raw.collect_item)
+    fun powerUpPickSound()     = playSound(R.raw.item_pickup)
 
     fun playWinSound()  { /* playSound(R.raw.win)  */ }
     fun playLoseSound() { /* playSound(R.raw.lose) */ }

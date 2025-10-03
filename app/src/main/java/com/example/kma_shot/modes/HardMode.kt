@@ -108,7 +108,7 @@ class HardMode(private val context: Context, private val gameState: GameState) :
         // Gạch đầu màn
         generateInitialBricks()
 
-        dropTableSystem.setDropRate(0.7f)
+        dropTableSystem.setDropRate(0.2f)
 
         // Trạng thái
         gameState.playerHealth = 5
@@ -129,7 +129,7 @@ class HardMode(private val context: Context, private val gameState: GameState) :
     }
 
     private fun generateInitialBricks() {
-        val rows = 5
+        val rows = 10
         val cols = 7
         val brickWidth  = (gameState.gameAreaWidth - 20f) / cols
         val brickHeight = 35f

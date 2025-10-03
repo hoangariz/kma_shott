@@ -64,9 +64,9 @@ class MediumMode(private val context: Context, private val gameState: GameState)
         ball.setVelocity(0f, 0f)
 
         generateInitialBricksMiddle()
-        dropTableSystem.setDropRate(0.25f)
+        dropTableSystem.setDropRate(0.20f)
 
-        gameState.playerHealth = 1
+        gameState.playerHealth = 3
         gameState.gameTime = 180f
         gameState.isGameRunning = false
     }
