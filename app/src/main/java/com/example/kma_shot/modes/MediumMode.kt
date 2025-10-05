@@ -189,7 +189,9 @@ class MediumMode(private val context: Context, private val gameState: GameState)
         powerUps.forEach { p ->
             val hitBottom = RectF.intersects(p.getBounds(), paddleBottom.getBounds())
             val hitTop    = RectF.intersects(p.getBounds(), paddleTop.getBounds())
-            if (!p.isCollected && (hitBottom || hitTop)) collectPowerUp(p)
+            if (!p.isCollected && (hitBottom || hitTop)) {
+                audioManager.powerUpPickSound()
+                collectPowerUp(p)}
         }
 
         bricks.removeAll { it.isDestroyed }
@@ -287,6 +289,7 @@ class MediumMode(private val context: Context, private val gameState: GameState)
                     bullets.add(b)
                     gameState.useBullet()
                     paddleBottom.shootCooldown = paddleBottom.shootInterval
+                    audioManager.playPaddleShotSound()
                 }
             }
         }

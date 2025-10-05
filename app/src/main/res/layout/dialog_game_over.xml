@@ -13,7 +13,7 @@
         android:id="@+id/tvGameOverTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="GAME OVER"
+        android:text="END GAME"
         android:textSize="32sp"
         android:textStyle="bold"
         android:textColor="@color/text_white"
@@ -28,7 +28,7 @@
         android:id="@+id/tvModeInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Easy Mode"
+        android:text="Bạn là 1 thiên tài"
         android:textSize="18sp"
         android:textColor="@color/light_purple"
         android:layout_marginBottom="24dp" />

@@ -66,7 +66,7 @@ class EasyMode(private val context: Context, private val gameState: GameState) :
     }
 
     private fun generateInitialBricks() {
-        val rows = 7
+        val rows = 8
         val cols = 7
         val brickWidth = (gameState.gameAreaWidth - 20) / cols
         val brickHeight = 35f
@@ -216,6 +216,8 @@ class EasyMode(private val context: Context, private val gameState: GameState) :
         powerUps.forEach { powerUp ->
             if (!powerUp.isCollected && rectIntersects(powerUp.getBounds(), paddle.getBounds())) {
                 collectPowerUp(powerUp)
+                audioManager.powerUpPickSound()
+
             }
         }
         
@@ -295,7 +297,7 @@ class EasyMode(private val context: Context, private val gameState: GameState) :
                     bullets.add(bullet)
                     gameState.useBullet()
                     paddle.shootCooldown = paddle.shootInterval
-                    // audioManager.playLaserSound() // TODO: Add sound later
+                     audioManager.playPaddleShotSound() // TODO: Add sound later
                 }
             }
         }

@@ -124,7 +124,7 @@ class ExtremeMode(private val context: Context, private val gameState: GameState
         // Bricks
         generateInitialBricks()
 
-        dropTableSystem.setDropRate(0.2f)
+        dropTableSystem.setDropRate(0.15f)
 
         gameState.playerHealth = 5
         gameState.gameTime = 180f
@@ -347,6 +347,7 @@ class ExtremeMode(private val context: Context, private val gameState: GameState
                 break
             }
         }
+        bricks.removeAll { it.isDestroyed }
 
         // Bullet vs Bricks
         bullets.forEach { bullet ->
@@ -365,12 +366,16 @@ class ExtremeMode(private val context: Context, private val gameState: GameState
                 }
             }
         }
+        bricks.removeAll { it.isDestroyed }
 
         // PowerUps pick (TOP ẩn thì không nhặt)
         powerUps.forEach { p ->
             val hitTop    = !isTopPaddleDisabled && !p.isCollected && RectF.intersects(p.getBounds(), paddleTop.getBounds())
             val hitBottom = !p.isCollected && RectF.intersects(p.getBounds(), paddleBottom.getBounds())
-            if (hitTop || hitBottom) collectPowerUp(p)
+            if (hitTop || hitBottom){
+                collectPowerUp(p)
+                audioManager.powerUpPickSound()
+            }
         }
 
         // Asteroids vs Paddles
@@ -584,6 +589,7 @@ class ExtremeMode(private val context: Context, private val gameState: GameState
                     paddleBottom.bulletCount -= 1     // giảm trực tiếp ở paddle
                     gameState.useBullet()             // giảm ở HUD
                     paddleBottom.shootCooldown = paddleBottom.shootInterval
+                    audioManager.playPaddleShotSound()
                 }
             }
             // Top
@@ -593,6 +599,7 @@ class ExtremeMode(private val context: Context, private val gameState: GameState
                     paddleTop.bulletCount -= 1
                     gameState.useBullet()
                     paddleTop.shootCooldown = paddleTop.shootInterval
+                    audioManager.playPaddleShotSound()
                 }
             }
         }

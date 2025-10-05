@@ -135,7 +135,8 @@ class AudioManager private constructor(private val context: Context) {
         loadSound(R.raw.brick_destroy)
         loadSound(R.raw.paddleshot)
         loadSound(R.raw.alert_ball)
-        loadSound(R.raw.collect_item)   // nhớ thêm file wav vào res/raw
+        loadSound(R.raw.collect_item)
+        loadSound(R.raw.end_game_sound)// nhớ thêm file wav vào res/raw
         // Nếu có: loadSound(R.raw.win); loadSound(R.raw.lose)
     }
 
@@ -218,7 +219,7 @@ class AudioManager private constructor(private val context: Context) {
     fun playPowerUpSound()     = playSound(R.raw.collect_item)
     fun powerUpPickSound()     = playSound(R.raw.item_pickup)
 
-    fun playWinSound()  { /* playSound(R.raw.win)  */ }
+    fun playWinSound()  { playSound(R.raw.end_game_sound)}
     fun playLoseSound() { /* playSound(R.raw.lose) */ }
 
     // ===================== Cleanup =====================

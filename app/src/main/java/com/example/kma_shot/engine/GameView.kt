@@ -281,7 +281,7 @@ class GameView(context: Context, private val gameModeTypeString: String) : Surfa
     private fun showGameOverDialog() {
         // Đảm bảo chỉ hiển thị một lần
         if (isGameOverDialogShown) return
-
+        audioManager.playSound(R.raw.end_game_sound) // Thay game_over_music bằng tên file của bạn
         if (context is FragmentActivity) {
             isGameOverDialogShown = true // Đặt cờ ngay lập tức
             val activity = context as FragmentActivity

@@ -41,7 +41,7 @@
         android:id="@+id/btnMainMenu"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="Màn hình chính"
+        android:text="Quay lại"
         android:textSize="16sp"
         android:textColor="@color/white"
         android:background="@drawable/button_pause_menu"

@@ -80,13 +80,14 @@ class GameOverDialog : DialogFragment() {
     private fun setupViews(view: View) {
         // Mode info
         val tvModeInfo = view.findViewById<TextView>(R.id.tvModeInfo)
-        tvModeInfo.text = when (gameMode) {
-            "easy" -> "Chế độ Dễ"
-            "medium" -> "Chế độ Trung bình"
-            "hard" -> "Chế độ Khó"
-            "extreme" -> "Chế độ Cực khó"
-            else -> "Chế độ Dễ"
-        }
+        tvModeInfo.text = "Game By Group F - L01"
+//        tvModeInfo.text = when (gameMode) {
+//            "easy" -> "Chế độ Dễ"
+//            "medium" -> "Chế độ Trung bình"
+//            "hard" -> "Chế độ Khó"
+//            "extreme" -> "Chế độ Cực khó"
+//            else -> "Chế độ Dễ"
+//        }
         
         // Final score
         val tvFinalScore = view.findViewById<TextView>(R.id.tvFinalScore)

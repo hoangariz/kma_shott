@@ -108,7 +108,7 @@ class HardMode(private val context: Context, private val gameState: GameState) :
         // Gạch đầu màn
         generateInitialBricks()
 
-        dropTableSystem.setDropRate(0.2f)
+        dropTableSystem.setDropRate(0.15f)
 
         // Trạng thái
         gameState.playerHealth = 5
@@ -163,7 +163,11 @@ class HardMode(private val context: Context, private val gameState: GameState) :
         val x = gameState.gameAreaLeft + 10f + col * brickWidth
         val y = gameState.gameAreaTop + 50f + row * (brickHeight + 5f)
 
-        val safe = bricks.none { b -> abs(b.x - x) < brickWidth && abs(b.y - y) < (brickHeight + 5f) }
+//        val safe = bricks.none { b -> abs(b.x - x) < brickWidth && abs(b.y - y) < (brickHeight + 5f) }
+        val safe = bricks.none { b ->
+            !b.isDestroyed && abs(b.x - x) < brickWidth && abs(b.y - y) < (brickHeight + 5f)
+        }
+
         val distFromBall = sqrt((ball.x - (x + brickWidth/2f)).let { it * it } + (ball.y - y).let { it * it })
         if (safe && distFromBall > 60f) {
             val brick = createRandomBrick(x, y, brickWidth - 5f, brickHeight)
@@ -309,6 +313,7 @@ class HardMode(private val context: Context, private val gameState: GameState) :
                 break
             }
         }
+        bricks.removeAll { it.isDestroyed }
 
         // Đạn vs gạch
         bullets.forEach { bullet ->
@@ -327,12 +332,16 @@ class HardMode(private val context: Context, private val gameState: GameState) :
                 }
             }
         }
+        bricks.removeAll { it.isDestroyed }
 
         // PowerUp nhặt bởi cả 2 paddle (TOP đang ẩn thì không nhặt)
         powerUps.forEach { p ->
             val hitTop    = !isTopPaddleDisabled && !p.isCollected && RectF.intersects(p.getBounds(), paddleTop.getBounds())
             val hitBottom = !p.isCollected && RectF.intersects(p.getBounds(), paddleBottom.getBounds())
-            if (hitTop || hitBottom) collectPowerUp(p)
+            if (hitTop || hitBottom) {
+                collectPowerUp(p)
+                audioManager.powerUpPickSound()
+            }
         }
 
         // Asteroid vs paddle (TOP đang ẩn thì không nhận va chạm)
@@ -482,12 +491,14 @@ class HardMode(private val context: Context, private val gameState: GameState) :
                 paddleBottom.shoot()?.let { b ->
                     b.loadBitmap(context); bullets.add(b)
                     gameState.useBullet(); paddleBottom.shootCooldown = paddleBottom.shootInterval
+                    audioManager.playPaddleShotSound()
                 }
             }
             if (!isTopPaddleDisabled && gameState.bulletCount > 0 && paddleTop.shootCooldown <= 0f) {
                 paddleTop.shoot()?.let { b ->
                     b.loadBitmap(context); bullets.add(b)
                     gameState.useBullet(); paddleTop.shootCooldown = paddleTop.shootInterval
+                    audioManager.playPaddleShotSound()
                 }
             }
         }
