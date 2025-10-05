@@ -10,28 +10,81 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/settings_title"
+        android:text="CÀI ĐẶT"
         android:textSize="32sp"
         android:textColor="@color/white"
         android:textStyle="bold"
         android:layout_marginBottom="32dp" />
 
-    <!-- Settings options will be added later -->
-    <TextView
-        android:layout_width="wrap_content"
+    <!-- Settings content -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:background="@drawable/dialog_background"
+        android:elevation="8dp"
         android:gravity="center"
-        android:text="Cài đặt game sẽ được hiển thị ở đây"
-        android:textSize="16sp"
-        android:textColor="@color/purple_accent" />
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- Background Music Setting -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Nhạc nền"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <Switch
+                android:id="@+id/switchBackgroundMusic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true" />
+
+        </LinearLayout>
+
+        <!-- Sound Effects Setting -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Hiệu ứng âm thanh"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <Switch
+                android:id="@+id/switchSoundEffects"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnBack"
         android:layout_width="200dp"
         android:layout_height="56dp"
         android:background="@drawable/button_main_menu"
-        android:text="@string/back"
+        android:text="Quay lại"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:textStyle="bold" />

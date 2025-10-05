@@ -16,15 +16,202 @@
         android:textStyle="bold"
         android:layout_marginBottom="32dp" />
 
-    <!-- Tutorial content will be added later -->
-    <TextView
-        android:layout_width="wrap_content"
+    <!-- Tutorial content -->
+    <ScrollView
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:gravity="center"
-        android:text="Hướng dẫn chơi game sẽ được hiển thị ở đây"
-        android:textSize="16sp"
-        android:textColor="@color/purple_accent" />
+        android:background="@drawable/dialog_background"
+        android:padding="20dp"
+        android:elevation="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Game Objective -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🎯 MỤC TIÊU GAME"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:layout_marginBottom="10dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="• Điều khiển paddle để đỡ bóng phá các khối gạch\n• Hoàn thành trong thời gian 3 phút\n• Mỗi viên gạch phá được = +10 điểm"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:layout_marginBottom="20dp" />
+
+            <!-- Controls -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🎮 CÁCH ĐIỀU KHIỂN"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:layout_marginBottom="10dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="• Chạm và kéo để di chuyển paddle\n• Paddle sẽ di chuyển theo ngón tay của bạn\n• Giữ bóng không rơi xuống dưới"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:layout_marginBottom="20dp" />
+
+            <!-- Bricks Types -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🧱 CÁC LOẠI GẠCH"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:layout_marginBottom="10dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="10dp">
+
+                <View
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="#2196F3"
+                    android:layout_marginEnd="10dp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Gạch xanh - Phá 1 lần"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:gravity="center_vertical" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="10dp">
+
+                <View
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="#F44336"
+                    android:layout_marginEnd="10dp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Gạch đỏ - Phá 2 lần"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:gravity="center_vertical" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="20dp">
+
+                <View
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="#FFC107"
+                    android:layout_marginEnd="10dp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Gạch vàng - Phá 3 lần"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:gravity="center_vertical" />
+
+            </LinearLayout>
+
+            <!-- Power-ups -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="⚡ ITEM ĐẶC BIỆT"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:layout_marginBottom="10dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="• Đạn - Tăng 5 viên đạn\n• Máu - Tăng máu\n• Mana - Tích 3 mana = đầy máu + gỡ paddle phụ 5s"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:layout_marginBottom="20dp" />
+
+            <!-- Difficulty Levels -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="📊 MỨC ĐỘ KHÓ"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:layout_marginBottom="10dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="• Dễ: Có 1 paddle phá bóng cơ bản\n• Trung bình: Có 2 paddle trên dưới\n• Khó: 2 paddle chéo nhau và thêm thiên thạch rơi xuống\n• Rất khó: Giống khó nhưng thêm rung màn hình và tốc độ rơi thiên thạch nhiều và nhanh hơn"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:layout_marginBottom="20dp" />
+
+            <!-- Tips -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="💡 MẸO CHƠI"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:layout_marginBottom="10dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="• Sử dụng đạn để phá gạch từ xa\n• Thu thập item để tăng sức mạnh\n• Tích mana để có lợi thế ở màn khó\n• Nên đưa quả bóng vào giữa khe các gạch để phá được nhiều gạch hơn\n• Điểm cao sẽ được lưu vào bảng xếp hạng"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:layout_marginBottom="20dp" />
+
+            <!-- Final Message -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🎉 Chúc các bạn chơi vui vẻ và đạt điểm cao!"
+                android:textSize="18sp"
+                android:textColor="@color/purple_accent"
+                android:textStyle="bold"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+    </ScrollView>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnBack"
