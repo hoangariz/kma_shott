@@ -268,7 +268,7 @@ class GameView(context: Context, private val gameModeTypeString: String) : Surfa
             am.resumeBackgroundMusic()
             // Nếu sau 50-100ms vẫn không phát (player null hoặc không playing), phát lại:
             postDelayed({
-                am.startBackgroundMusic()
+                am.playBackgroundMusic(R.raw.bg_music)
             }, 100)
         }
 
@@ -326,6 +326,11 @@ class GameView(context: Context, private val gameModeTypeString: String) : Surfa
         // Xóa mode cũ nếu có để tránh rò rỉ hoặc hành vi không mong muốn
         currentMode?.dispose() // Sử dụng dispose method có sẵn trong ModeContract
         currentMode = null
+
+        // Khởi động lại nhạc nền nếu được bật
+        if (isBackgroundMusicEnabled) {
+            audioManager.playBackgroundMusic(R.raw.bg_music)
+        }
 
         try {
             currentMode = ModeFactory.createMode(gameModeTypeString, context, gameState)
