@@ -114,7 +114,7 @@ class EasyMode(private val context: Context, private val gameState: GameState) :
             val yOverlap = kotlin.math.abs(existing.y - brickY) < brickHeight + 5
             xOverlap && yOverlap
         }
-        
+
         // Check không overlap với ball
         val ballDistance = kotlin.math.sqrt(
             ((ball.x - (brickX + brickWidth/2)) * (ball.x - (brickX + brickWidth/2)) + 
@@ -168,6 +168,7 @@ class EasyMode(private val context: Context, private val gameState: GameState) :
         // Ball vs bricks - CHECK ONCE PER FRAME, STOP AFTER FIRST HIT
         var ballHitBrick = false
         for (brick in bricks) {
+            if (brick.isDestroyed) continue
             if (collisionSystem.checkBallBrickCollision(ball, brick)) {
                 audioManager.playBallBrickSound()
                 
@@ -190,7 +191,8 @@ class EasyMode(private val context: Context, private val gameState: GameState) :
                 break // STOP checking after first collision to prevent penetration
             }
         }
-        
+     //   bricks.removeAll { it.isDestroyed }
+
         // Bullets vs bricks
         bullets.forEach { bullet ->
             bricks.forEach { brick ->
@@ -211,7 +213,8 @@ class EasyMode(private val context: Context, private val gameState: GameState) :
                 }
             }
         }
-        
+        bricks.removeAll { it.isDestroyed }
+
         // Power-ups vs paddle
         powerUps.forEach { powerUp ->
             if (!powerUp.isCollected && rectIntersects(powerUp.getBounds(), paddle.getBounds())) {
@@ -262,7 +265,7 @@ class EasyMode(private val context: Context, private val gameState: GameState) :
     override fun render(canvas: Canvas) {
         // Draw bricks
         bricks.forEach { it.draw(canvas) }
-        
+
         // Draw power-ups
         powerUps.forEach { it.draw(canvas) }
         

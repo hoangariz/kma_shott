@@ -80,8 +80,24 @@ class PauseMenuDialog : DialogFragment() {
         }
 
         btnMainMenu.setOnClickListener {
-            listener?.onMainMenu()
-            dismiss()
+            // Cleanup trước khi quay lại main menu
+            try {
+                // Dừng tất cả audio nếu context không null
+                context?.let { ctx ->
+                    val audioManager = com.example.kma_shot.core.AudioManager.getInstance(ctx)
+                    audioManager.stopBackgroundMusic()
+                }
+                
+                // Dismiss dialog trước
+                dismiss()
+                
+                // Gọi callback sau khi dismiss
+                listener?.onMainMenu()
+            } catch (e: Exception) {
+                // Nếu có lỗi, vẫn dismiss và gọi callback
+                dismiss()
+                listener?.onMainMenu()
+            }
         }
 
         switchBackgroundMusic.setOnCheckedChangeListener { _, isChecked ->

@@ -347,6 +347,36 @@ class GameView(context: Context, private val gameModeTypeString: String) : Surfa
         Log.d("GameView", "Game restarted.")
     }
 
+    private fun cleanupAndFinish() {
+        try {
+            // Dừng game thread
+            gameThread?.setRunning(false)
+            
+            // Cleanup current mode
+            currentMode?.dispose()
+            currentMode = null
+            
+            // Dừng tất cả audio
+            audioManager.stopBackgroundMusic()
+            
+            // Reset game state
+            gameState.reset()
+            
+            // Finish activity
+            if (context is FragmentActivity) {
+                (context as FragmentActivity).finish()
+            }
+            
+            Log.d("GameView", "Cleanup completed, returning to main menu")
+        } catch (e: Exception) {
+            Log.e("GameView", "Error during cleanup", e)
+            // Vẫn finish activity ngay cả khi có lỗi
+            if (context is FragmentActivity) {
+                (context as FragmentActivity).finish()
+            }
+        }
+    }
+
     private fun showPauseMenu() {
         if (context is FragmentActivity) {
             val activity = context as FragmentActivity
@@ -373,7 +403,8 @@ class GameView(context: Context, private val gameModeTypeString: String) : Surfa
                     }
                     
                     override fun onMainMenu() {
-                        activity.finish()
+                        // Cleanup trước khi quay lại main menu
+                        cleanupAndFinish()
                     }
                     
                     override fun onBackgroundMusicToggle(isEnabled: Boolean) {
